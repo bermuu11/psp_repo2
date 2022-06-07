@@ -1,0 +1,378 @@
+/*bloque 1*/
+CREATE TABLE temporada (
+   idTemporada INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   anio INT NOT NULL
+);
+
+CREATE TABLE liga (
+	idLiga INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	nombre VARCHAR(30) NOT NULL,
+	pais VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE competicion (
+	idCompeticion INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	idTemporada INT NOT NULL,
+	idLiga INT NOT NULL,
+    nombre VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE equipo (
+	idEquipo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	nombre VARCHAR(30) NOT NULL,
+	estadio VARCHAR(50) NOT NULL,
+	anioFundacion INT NOT NULL,
+	ciudad VARCHAR(30) NOT NULL,
+	entrenador VARCHAR(50) NOT NULL,
+	presidente VARCHAR(50)
+);
+
+CREATE TABLE compite (
+	idCompeticion INT NOT NULL,
+	idEquipo INT NOT NULL
+);
+
+CREATE TABLE jugador (
+	idJugador INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	nombre VARCHAR(20) NOT NULL,
+	apellido1 VARCHAR(30) NOT NULL,
+	apellido2 VARCHAR(30),  
+	dorsal INT NOT NULL,
+	fechaNacimiento DATE NOT NULL,
+	posicion VARCHAR(20) NOT NULL,
+	pais VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE pertenece (
+	idJugador INT NOT NULL,
+	idEquipo INT NOT NULL,
+	idCompeticion INT NOT NULL,
+	fechaTraspaso DATE NOT NULL
+);
+
+
+CREATE TABLE partido (
+	idPartido INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	idCompeticion INT NOT NULL,
+	jornada INT NOT NULL,
+	hora TIME,
+ 	fecha DATE,
+	id_equipoLocal INT NOT NULL,
+	id_equipoVisitante INT NOT NULL,
+	golesLocal INT,
+	golesVisitante INT,
+	estado VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE clasifica (
+	idCompeticion INT NOT NULL,
+	idEquipo INT NOT NULL,
+	puntos INT NOT NULL,
+	golesAfavor INT NOT NULL,
+	golesEnContra INT NOT NULL,
+	partidosJugados INT NOT NULL,
+	partidosGanados INT NOT NULL,
+	partidosEmpatados INT NOT NULL,
+	partidosPerdidos INT NOT NULL,
+	posicion INT NOT NULL
+);
+
+/*bloque 2*/
+/*Modificacion de las tablas para incluir las foreign keys*/
+ALTER TABLE competicion
+    ADD CONSTRAINT fk_idTemporada FOREIGN KEY (idTemporada)
+    REFERENCES temporada (idTemporada);
+ALTER TABLE competicion
+    ADD CONSTRAINT fk_idLiga FOREIGN KEY (idLiga)
+    REFERENCES liga (idLiga);
+
+ALTER TABLE compite
+    ADD CONSTRAINT fk_idCompeticion FOREIGN KEY (idCompeticion)
+    REFERENCES competicion (idCompeticion);
+ALTER TABLE compite
+    ADD CONSTRAINT fk_idEquipo FOREIGN KEY (idEquipo)
+    REFERENCES equipo (idEquipo);
+
+ALTER TABLE pertenece
+    ADD CONSTRAINT fk_idCompeticion_2 FOREIGN KEY (idCompeticion)
+    REFERENCES competicion (idCompeticion);
+ALTER TABLE pertenece
+    ADD CONSTRAINT fk_idJugador FOREIGN KEY (idJugador)
+    REFERENCES jugador (idJugador);
+ALTER TABLE pertenece
+    ADD CONSTRAINT fk_idEquipo_2 FOREIGN KEY (idEquipo)
+    REFERENCES equipo (idEquipo);
+
+ALTER TABLE partido
+    ADD CONSTRAINT fk_idEquipoLocal FOREIGN KEY (id_equipoLocal)
+    REFERENCES equipo (idEquipo);
+ALTER TABLE partido
+    ADD CONSTRAINT fk_idEquipoVisitante FOREIGN KEY (id_equipoVisitante)
+    REFERENCES equipo (idEquipo);
+ALTER TABLE partido
+    ADD CONSTRAINT fk_idCompeticion_3 FOREIGN KEY (idCompeticion)
+    REFERENCES competicion (idCompeticion);
+
+ALTER TABLE clasifica
+    ADD CONSTRAINT fk_idCompeticion_4 FOREIGN KEY (idCompeticion)
+    REFERENCES competicion (idCompeticion);
+ALTER TABLE clasifica
+    ADD CONSTRAINT fk_idEquipo_3 FOREIGN KEY (idEquipo)
+    REFERENCES equipo (idEquipo);
+	
+/*inserts*/
+/*bloque 3*/
+INSERT INTO temporada OVERRIDING SYSTEM VALUE VALUES (null, 2021);
+INSERT INTO temporada OVERRIDING SYSTEM VALUE VALUES (null, 2022);
+
+
+INSERT INTO liga OVERRIDING SYSTEM VALUE VALUES (null, '1ª División', 'España');
+INSERT INTO liga OVERRIDING SYSTEM VALUE VALUES (null, '2ª División', 'España');
+
+/*bloque 4*/
+INSERT INTO competicion OVERRIDING SYSTEM VALUE VALUES (null, 0, 0, 'Liga Santander');
+INSERT INTO competicion OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, 'Liga Smartbank');
+
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Athletic Club', 'San Mamés', 1898, 'Bilbao', 'Marcelino García Toral', 'Aitor Elizegi');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Alavés', 'Estadio de Mendizorroza', 1921, 'Vitoria', 'Julio Velázquez', 'Alfonso Fernandez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Atlético de Madrid', 'Wanda Metropolitano', 1903, 'Madrid', 'Diego Pablo Simeone', 'Enrique Cerezo');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Betis', 'Benito Villamarín', 1907, 'Sevilla', 'Manuel Pellegrini', 'Ángel Haro');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Cádiz', 'Estado Nuevo Mirandilla', 1910, 'Cádiz', 'Sergio González', 'Manuel Vizcaíno');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Elche', 'Martínez Valero', 1922, 'Elche', 'Francisco Rodríguez', 'Joaquín Buitrago');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Barcelona', 'Camp Nou', 1899, 'Barcelona', 'Xavi Hernández', 'Joan Laporta');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Getafe', 'Colisuem Alfonso Pérez', 1983, 'Madrid', 'Quique Sánchez Flores', 'Ángel Torres');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Granada', 'Nuevo Los Cármenes', 1931, 'Granada', 'Aitor Karanka', 'Rentao Yi');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Madrid', 'Santiago Bernabéu', 1902, 'Madrid', 'Carlo Ancelotti', 'Florentino Pérez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Espanyol', 'RCDE Stadium', 1903, 'Barcelona', 'Vicente Moreno', 'Chen Yansheng');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Celta de Vigo', 'Balaídos', 1923, 'Vigo', 'Eduardo Coudet', 'Carlos Mouriño');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Rayo Vallecano', 'Estadio de Vallecas', 1924, 'Madrid', 'Andoni Iraola', 'Raúl Martín Presa');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Sociedad', 'Reale Arena', 1909, 'San Sebastián', 'Imanol Alguacil', 'Jokin Aperribay');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Sevilla', 'Ramón Sánchez Pizjuán', 1890, 'Sevilla', 'Julen Lopetegui', 'José Castro');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Valencia', 'Mestalla', 1919, 'Valencia', 'José Bordalás', 'Anil Murphy');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Mallorca', 'Son Moix', 1916, 'Mallorca', 'Javier Aguirre', 'Andy Koholberg');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Levante', 'Ciutat de Valencia', 1909, 'Valencia', 'Alessio Lisci', 'Francisco Catalán');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Villarreal', 'Estadio de la Cerámica', 1923, 'Vila-Real', 'Unai Emery', 'Fernando Roig');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Osasuna', 'El Sadar', 1920, 'Pamplona', 'Jagoba Arrasate', 'Luis Sabalza');
+
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'UD Almería', 'Juegos del Mediterráneo', 1989, 'Almería', 'Joan Ferrer Sicilia', 'Turki Al-Sheikh');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Tenerife', 'Heliodoro Rodríguez López', 1925, 'Santa Cruz de Tenerife', 'Luis Miguel Ramis', 'Miguel Concepción Cáceres');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'SD Eibar', 'Ipurúa', 1940, 'Éibar', 'Gaizka Garitano', 'Alex Aranzábal Mínguez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Zaragoza', 'La Romareda', 1932, 'Zaragoza', 'Juan Carlos Carcedo', 'Jorge Mas Santos');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Oviedo', 'Estadio Carlos Tartiere', 1926, 'Oviedo', 'Cuco Ziganda', 'Jorge Menéndez Vallina');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'UD Las Palmas', 'Estadio de Gran Canaria', 1949, 'Las Palmas', 'Francisco García Pimiento', 'Miguel Ángel Ramírez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Girona', 'Estadi Municipal Montilivi', 1930, 'Girona', 'Míchel Sánchez', 'Delfí Geli');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'SD Huesca', 'El Alcoraz', 1960, 'Huesca', 'Xisco Muñoz', 'Manuel Torres');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Málaga', 'La Rosaleda', 1948, 'Málaga', 'Pablo Guede', 'Al Thani');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Sporting de Gijón', 'El Molinón', 1905, 'Gijón', 'Abelardo Fernñandez', 'Javier Fernández Rodríguez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'SD Ponferradina', 'El Toralín', 1922, 'Ponferrada', 'Jon Pérez Bolo', 'José Silvano');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Burgos', 'El Plantío', 1985, 'Burgos', 'Julián Calero', 'Grupo Yucon');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'UD Ibiza', 'Can Misses', 2015, 'Ibiza', 'Paco Jémez', 'Amadeo Salvo');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Cartagena', 'Cartagonova', 1995, 'Cartagena', 'Luis Carrión', 'Francisco Belmonte Ortiz');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'CD Leganés', 'Butarque', 1928, 'Leganés', 'Mehdi Nafti', 'Felipe Moreno');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'CD Lugo', 'Anxo Carro', 1953, 'Lugo', 'Rubén Albés', 'Tino Saqués');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'CD Mirandés', 'Estadio Municipal de Anduva', 1927, 'Miranda de Ebro', 'Borja Jiménez', 'Alfredo de Miguel');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Valladolid', 'Estadio José Zorilla', 1928, 'Valladolid', 'José Rojo Martín', 'Ronaldo Nazario');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'AD Alcorcón', 'Estadio de Santo Domingo', 1971, 'Alcorcón', 'Fran Fernández', 'Iván Bravo');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Fuenlabrada', 'Estadio Fernando Torres', 1975, 'Fuenlabrada', 'Mere Hermoso', 'Jonathan Praena Sánchez');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'Real Sociedad B', 'Reale Arena', 1951, 'San Sebastián', 'Xabi Alonso', 'Jokin Aperribay');
+INSERT INTO equipo OVERRIDING SYSTEM VALUE VALUES (null, 'SD Amorebieta', 'Urritxe', 1925, 'Amorebieta-Echano', 'Haritz Mujika', 'Jon Larrea');
+
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Iker', 'Muniaín', 'Goñi', 10, '1992-12-19', 'Mediapunta', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Iñaki', 'Williams', 'Arthuer', 9, '1994-06-15', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Joselu', 'Mato', 'Sanmartín', 9, '1990-03-27', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Luis', 'Rioja', 'González', 11, '1993-10-16', 'Extremo izquierdo', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Antoine', 'Griezmann', '', 8, '1991-03-21', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Stefan', 'Savic', '', 15, '1991-01-08', 'Defensa central', 'Montenegro');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Nabil', 'Fekir', '', 8, '1993-07-18', 'Mediapunta', 'Francia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Sergio', 'Canales', 'Madrazo', 10, '1991-02-16', 'Mediapunta', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Álvaro', 'Negredo', 'Sánchez', 18, '1985-08-20', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Anthony', 'Lozano', 'Colón', 9, '1993-04-25', 'Delantero', 'Honduras');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Guido', 'Carrillo', '', 7, '1991-05-25', 'Delantero', 'Argentina');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Pere', 'Milla', 'Peña', 10, '1992-09-23', 'Mediapunta', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Pedri', 'González', 'López', 16, '2002-11-25', 'Mediocentro', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Ousmane', 'Dembélé', '', 7, '1997-05-15', 'Extremo derecho', 'Francia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Mauro', 'Arambarri', 'Rosa', 18, '1995-09-30', 'Mediocentro', 'Uruguay');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Enes', 'Ünal', '', 10, '1997-05-10', 'Delantero', 'Turquía');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Luis', 'Suárez', 'Charris', 9, '1997-12-02', 'Delantero', 'Colombia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Darwin', 'Machís', 'Marcano', 11, '1993-02-07', 'Extremo izquierdo', 'Venezuela');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Karim', 'Benzema', '', 9, '1987-12-19', 'Delantero', 'Francia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Luka', 'Modric', '', 20, '1985-09-09', 'Mediocentro', 'Croacia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Raúl', 'de Tomás', 'Gómez', 11, '1994-10-17', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Sergi', 'Darder', 'Moll', 10, '1993-12-22', 'Mediocentro', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Iago', 'Aspas', 'Juncal', 10, '1987-08-01', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Renato', 'Tapia', 'Cortijo', 14, '1995-07-28', 'Mediacentro', 'Perú');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Radamel', 'Falcao', 'García', 3, '1986-02-10', 'Delantero', 'Colombia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Óscar', 'Trejo', '', 8, '1988-04-26', 'Mediapunta', 'Argentina');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Mikel', 'Oyarzabal', 'Ugarte', 10, '1997-04-21', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Alexander', 'Isak', '', 19, '1999-09-21', 'Delantero', 'Suecia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Ivan', 'Rakitic', '', 10, '1988-03-10', 'Mediapunta', 'Croacia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Diego Carlos', 'Santos', 'Silva', 20, '1993-03-15', 'Defensa central', 'Brasil');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Gonçalo', 'Guedes', '', 7, '1996-11-26', 'Extremo izquierdo', 'Portugal');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Carlos', 'Soler', 'Barragán', 10, '1997-01-02', 'Mediapunta', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Takefusa', 'Kubo', '', 11, '2001-06-04', 'Mediapunta', 'Japón');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Salvador', 'Sevilla', 'López', 8, '1984-03-18', 'Mediapunta', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'José Luis', 'Morales', 'Nogales', 11, '1987-07-23', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Roger', 'Martí', 'Salvador', 9, '1991-01-03', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Gerard', 'Moreno', 'Balagueró', 7, '1992-04-07', 'Delantero', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Daniel', 'Parejo', 'Muñoz', 10, '1989-04-16', 'Mediocentro', 'España');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Ante', 'Budimir', '', 9, '1991-07-22', 'Delantero', 'Croacia');
+INSERT INTO jugador OVERRIDING SYSTEM VALUE VALUES (null, 'Roberto', 'Torres', 'Morales', 10, '1989-03-07', 'Mediapunta', 'España');
+
+/*bloque 5*/
+INSERT INTO pertenece VALUES (0, 0, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (1, 0, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (2, 1, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (3, 1, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (4, 2, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (5, 2, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (6, 3, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (7, 3, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (8, 4, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (9, 4, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (10, 5, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (11, 5, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (12, 6, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (13, 6, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (14, 7, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (15, 7, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (16, 8, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (17, 8, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (18, 9, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (19, 9, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (20, 10, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (21, 10, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (22, 11, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (23, 11, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (24, 12, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (25, 12, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (26, 13, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (27, 13, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (28, 14, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (29, 14, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (30, 15, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (31, 15, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (32, 16, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (33, 16, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (34, 17, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (35, 17, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (36, 18, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (37, 18, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (38, 19, 0, '2021-07-01');
+INSERT INTO pertenece VALUES (39, 19, 0, '2021-07-01');
+
+INSERT INTO compite VALUES (0, 0)
+INSERT INTO compite VALUES (0, 1)
+INSERT INTO compite VALUES (0, 2)
+INSERT INTO compite VALUES (0, 3)
+INSERT INTO compite VALUES (0, 4)
+INSERT INTO compite VALUES (0, 5)
+INSERT INTO compite VALUES (0, 6)
+INSERT INTO compite VALUES (0, 7)
+INSERT INTO compite VALUES (0, 8)
+INSERT INTO compite VALUES (0, 9)
+INSERT INTO compite VALUES (0, 10)
+INSERT INTO compite VALUES (0, 11)
+INSERT INTO compite VALUES (0, 12)
+INSERT INTO compite VALUES (0, 13)
+INSERT INTO compite VALUES (0, 14)
+INSERT INTO compite VALUES (0, 15)
+INSERT INTO compite VALUES (0, 16)
+INSERT INTO compite VALUES (0, 17)
+INSERT INTO compite VALUES (0, 18)
+INSERT INTO compite VALUES (0, 19)
+
+INSERT INTO compite VALUES (1, 20)
+INSERT INTO compite VALUES (1, 21)
+INSERT INTO compite VALUES (1, 22)
+INSERT INTO compite VALUES (1, 23)
+INSERT INTO compite VALUES (1, 24)
+INSERT INTO compite VALUES (1, 25)
+INSERT INTO compite VALUES (1, 26)
+INSERT INTO compite VALUES (1, 27)
+INSERT INTO compite VALUES (1, 28)
+INSERT INTO compite VALUES (1, 29)
+INSERT INTO compite VALUES (1, 30)
+INSERT INTO compite VALUES (1, 31)
+INSERT INTO compite VALUES (1, 32)
+INSERT INTO compite VALUES (1, 33)
+INSERT INTO compite VALUES (1, 34)
+INSERT INTO compite VALUES (1, 35)
+INSERT INTO compite VALUES (1, 36)
+INSERT INTO compite VALUES (1, 37)
+INSERT INTO compite VALUES (1, 38)
+INSERT INTO compite VALUES (1, 39)
+INSERT INTO compite VALUES (1, 40)
+INSERT INTO compite VALUES (1, 41)
+
+//partidos primera
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 0, 1, 2, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 2, 3, 1, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 4, 5, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 6, 7, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 8, 9, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 10, 11, 1, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 12, 13, 4, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 14, 15, 3, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 16, 17, 0, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 0, 1, '20:45:00', '2022-04-10', 18, 19, 1, 1, 'Finalizado');
+
+//partidos segunda
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 20, 21, 2, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 22, 23, 3, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 24, 25, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 26, 27, 1, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 28, 29, 2, 5, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 30, 31, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 32, 33, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 34, 35, 3, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 36, 37, 0, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 38, 39, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 1, '20:45:00', '2022-04-10', 40, 41, 1, 2, 'Finalizado');
+
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 20, 31, 0, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 21, 32, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 22, 33, 0, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 23, 34, 0, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 24, 35, 3, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 25, 36, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 26, 37, 4, 5, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 27, 38, 3, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 28, 39, 6, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 29, 40, 0, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 2, '20:45:00', '2022-04-10', 30, 41, 0, 0, 'Finalizado');
+
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 41, 31, 1, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 20, 40, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 23, 33, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 22, 32, 1, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 25, 35, 3, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 24, 34, 3, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 27, 37, 1, 3, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 26, 36, 0, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 29, 39, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 28, 38, 1, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 3, '20:45:00', '2022-04-10', 21, 30, 1, 2, 'Finalizado');
+
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 20, 22, 5, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 24, 26, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 28, 30, 3, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 32, 34, 0, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 36, 38, 2, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 40, 23, 3, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 25, 27, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 29, 31, 1, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 33, 35, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 37, 39, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 4, '20:45:00', '2022-04-10', 41, 21, 4, 1, 'Finalizado');
+
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 20, 25, 2, 4, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 30, 35, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 40, 21, 0, 0, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 22, 27, 2, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 23, 28, 3, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 24, 29, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 26, 31, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 32, 36, 4, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 33, 37, 1, 2, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 34, 39, 2, 1, 'Finalizado');
+INSERT INTO partido OVERRIDING SYSTEM VALUE VALUES (null, 1, 5, '20:45:00', '2022-04-10', 41, 38, 3, 0, 'Finalizado');
